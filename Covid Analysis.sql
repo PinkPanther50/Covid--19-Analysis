@@ -51,7 +51,7 @@ order by TotalDeathCount desc
 
 Select SUM(new_cases) as total_cases, SUM((new_deaths)) as total_deaths, (SUM(new_deaths)/SUM(New_Cases))*100 as DeathPercentage
 From CovidDeaths1
--- Where location like '%states%'
+-- Where location = 'india'
 where continent is not null 
 -- Group By date
 order by 1,2
@@ -63,8 +63,8 @@ order by 1,2
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
-From PortfolioProject..CovidDeaths dea
-Join PortfolioProject..CovidVaccinations vac
+From CovidDeaths1 dea
+Join CovidVaccinations1 vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 where dea.continent is not null 
@@ -89,8 +89,8 @@ Insert into #PercentPopulationVaccinated
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
-From PortfolioProject..CovidDeaths dea
-Join PortfolioProject..CovidVaccinations vac
+From CovidDeaths1 dea
+Join CovidVaccinations1 vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 --where dea.continent is not null 
@@ -102,14 +102,13 @@ From #PercentPopulationVaccinated
 
 
 
--- Creating View to store data for later visualizations
 
 Create View PercentPopulationVaccinated as
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
-From PortfolioProject..CovidDeaths dea
-Join PortfolioProject..CovidVaccinations vac
+From CovidDeaths1 dea
+Join CovidVaccinations1 vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 where dea.continent is not null 
